@@ -6,7 +6,9 @@ const { Category, Product } = require('../../models');
 router.get('/', (req, res) => {
   // find all categories
   // be sure to include its associated Products
-  Category.findAll().then(dbCategory => {
+  Category.findAll({
+    include: [Product]
+  }).then(dbCategory => {
     res.json(dbCategory);
   });
 });
@@ -18,6 +20,7 @@ router.get('/:id', (req, res) => {
     where: {
       id: req.params.id
     },
+    include: [Product]
   }).then(dbCategory => {
     res.json(dbCategory);
   })
@@ -25,18 +28,15 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
   // create a new category
-  Category.create(
-    {
-      category_name: req.body.category_name
-    }
-  ).then(dbCategory => {
+  Category.create(req.body)
+  .then(dbCategory => {
     res.json(dbCategory);
   })
 });
 
 router.put('/:id', (req, res) => {
   // update a category by its `id` value
-  Category.update({
+  Category.update(req.body, {
     where: {
       id: req.params.id
     }
